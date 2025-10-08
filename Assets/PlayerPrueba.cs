@@ -10,13 +10,16 @@ public class PlayerPrueba : MonoBehaviour, InputSystem_Actions.IPlayerActions
     [SerializeField] private GameObject _gameObject;
     [SerializeField] private Transform _pointShoot;
     [SerializeField] private Vector2 initialPosition = new Vector2(0, -2);
+    [SerializeField] private SpriteRenderer _spriteRenderer;
 
     private void Awake()
     {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
         transform.position = initialPosition;
         _rb = GetComponent<Rigidbody2D>();
         inputActions = new InputSystem_Actions();
         inputActions.Player.SetCallbacks(this);
+       
     }
     private void OnEnable()
     {
@@ -28,10 +31,32 @@ public class PlayerPrueba : MonoBehaviour, InputSystem_Actions.IPlayerActions
     }
     public void OnAttack(InputAction.CallbackContext context)
     {
+        
         if (context.performed)
         {
             Instantiate(_gameObject, _pointShoot.position, Quaternion.identity);
         }
+    }
+    public void OnClick(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            AudioManager.Instance.clipList.ContainsKey(AudioClips.Yamete);
+
+            Debug.Log(context.ReadValue<Vector2>());
+            if (_spriteRenderer.color == Color.red)
+            {
+                _spriteRenderer.color = Color.black;
+            }
+            else
+            {
+
+                _spriteRenderer.color = Color.red;
+            }
+        }
+        if(context.performed)
+        Debug.Log(Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>()));
+        
     }
 
     public void OnMove(InputAction.CallbackContext context)
