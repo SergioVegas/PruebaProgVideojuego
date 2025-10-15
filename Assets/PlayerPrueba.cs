@@ -41,22 +41,38 @@ public class PlayerPrueba : MonoBehaviour, InputSystem_Actions.IPlayerActions
     {
         if (context.performed)
         {
-            AudioManager.Instance.clipList.ContainsKey(AudioClips.Yamete);
-
-            Debug.Log(context.ReadValue<Vector2>());
-            if (_spriteRenderer.color == Color.red)
+            Vector3 clickPoint = Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>());
+            RaycastHit2D hit2D = Physics2D.Raycast(clickPoint, Vector3.forward, 12f);
+            if (hit2D)
             {
-                _spriteRenderer.color = Color.black;
-            }
-            else
-            {
+                Debug.Log(hit2D.collider.gameObject.name);
+                AudioClip clip = null;
+                foreach(var kvp in AudioManager.Instance.clipList)
+                {
+                    if(AudioManager.Instance.clipList.ContainsKey(AudioClips.Yamete))
+                    {
+                        clip = kvp.Value;
+                    }
+                }
+                AudioSource audioSource = GetComponent <AudioSource>();
+                if(clip!=null)
+                {
+                    audioSource.clip = clip;
+                }
+                audioSource.Play();
+                if (_spriteRenderer.color == Color.red)
+                {
+                    _spriteRenderer.color = Color.black;
+                }
+                else
+                {
 
-                _spriteRenderer.color = Color.red;
+                    _spriteRenderer.color = Color.red;
+                }
             }
         }
         if(context.performed)
         Debug.Log(Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>()));
-        
     }
 
     public void OnMove(InputAction.CallbackContext context)
